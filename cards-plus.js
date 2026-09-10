@@ -83,6 +83,7 @@ window.addEventListener('load',()=>{
   draw=function(){
     if(!intro){
       $('known').hidden=false;$('shuffle').hidden=false;
+      $('prev').textContent='← Назад';$('next').textContent='Дальше →';
       return baseDraw();
     }
     $('tag').textContent='Вступление · Перед началом';
