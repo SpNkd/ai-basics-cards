@@ -89,6 +89,7 @@ window.addEventListener('load',()=>{
   function startDeck(){intro=false;i=0;side=0;draw()}
   draw=function(){
     if(!intro){
+      document.body.classList.remove('intro-active');
       $('known').hidden=false;$('shuffle').hidden=false;
       $('prev').parentElement.hidden=false;$('flip').hidden=true;
       $('prev').textContent='← Предыдущая';$('next').textContent='Следующая →';
@@ -96,6 +97,7 @@ window.addEventListener('load',()=>{
       $('card').insertAdjacentHTML('afterbegin','<span class="spread-badge">Разворот '+(side+1)+' из 3</span>');
       return;
     }
+    document.body.classList.add('intro-active');
     $('tag').textContent='Вступление · Перед началом';
     $('num').textContent='0 / '+C.length;
     $('bar').style.width='0%';
