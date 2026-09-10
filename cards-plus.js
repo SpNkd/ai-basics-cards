@@ -1,5 +1,12 @@
 /* Meaningful scene for every detailed card, and a full 30-question practice test. */
 window.addEventListener('load',()=>{
+  const syncThemeIcon=()=>{
+    const dark=document.body.classList.contains('dark');
+    $('theme').textContent=dark?'☀️':'🌙';
+    $('theme').setAttribute('aria-label',dark?'Включить светлую тему':'Включить тёмную тему');
+  };
+  syncThemeIcon();
+  $('theme').onclick=()=>{setTheme(!document.body.classList.contains('dark'));syncThemeIcon()};
   const extra=[
     ['Что умеет ИИ в широком смысле?',['Делать прогнозы, рекомендации, решения или контент','Только вести разговор','Только управлять роботами'],0],
     ['Что относится к повседневным примерам ИИ?',['Навигатор и фильтр спама','Только печатная книга','Обычный калькулятор без данных'],0],
@@ -83,15 +90,18 @@ window.addEventListener('load',()=>{
   draw=function(){
     if(!intro){
       $('known').hidden=false;$('shuffle').hidden=false;
-      $('prev').textContent='← Назад';$('next').textContent='Дальше →';
-      return baseDraw();
+      $('prev').parentElement.hidden=false;$('flip').hidden=true;
+      $('prev').textContent='← Предыдущая';$('next').textContent='Следующая →';
+      baseDraw();
+      $('card').insertAdjacentHTML('afterbegin','<span class="spread-badge">Разворот '+(side+1)+' из 3</span>');
+      return;
     }
     $('tag').textContent='Вступление · Перед началом';
     $('num').textContent='0 / '+C.length;
     $('bar').style.width='0%';
     $('card').className='card intro-card';
     $('card').innerHTML='<img src="assets/hero/ai-without-magic.webp" alt="Человек за ноутбуком: изображения, карта, документ и аудио проходят через модель и превращаются в понятный результат"><div class="intro-copy"><div><h2>ИИ без магии</h2><p>Короткий курс о том, как ИИ работает и как пользоваться им с пользой.</p></div><span class="intro-start">Начать →</span></div>';
-    $('flip').textContent='Начать';$('prev').textContent='Начать';$('next').textContent='Начать';
+    $('flip').hidden=true;$('prev').parentElement.hidden=true;
     $('known').hidden=true;$('shuffle').hidden=true;
   };
   f=function(){intro?startDeck():baseFlip()};
