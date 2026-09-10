@@ -77,5 +77,24 @@ window.addEventListener('load',()=>{
   detail=function(c,n){return '<div class="detail-layout"><div class="detail-top-row">'+art(n)+'<div class="detail-block takeaway"><b>Ключевая мысль</b><p>'+c[2]+'</p></div></div><div class="detail-bottom-row"><div class="detail-block"><b>Как это работает</b><p>'+how[n]+'</p></div><div class="detail-block example"><b>Живой пример</b><p>'+c[3]+'</p></div></div></div><p class="hint">Нажмите карточку, чтобы вернуться к вопросу</p>'};
   draw=function(){let c=C[ord[i]],labels=['Вопрос и контекст','Короткий ответ','Разбор и пример'];$('tag').textContent=c[0]+' · '+labels[side];$('num').textContent=(i+1)+' / '+C.length;$('bar').style.width=(i+1)*100/C.length+'%';$('card').className='card '+(side?'answer':'')+(side===2?' detail':'');$('card').innerHTML=side===2?detail(c,ord[i]):'<h2>'+c[side+1]+'</h2><p class="hint">Нажмите для следующего разворота</p>';$('flip').textContent=side===2?'К вопросу':'Следующий разворот';$('known').textContent=known.has(ord[i])?'✓ Уже понятно':'✓ Понятно';$('saved').textContent='Понятно: '+known.size+' / '+C.length};
   start=function(){qi=score=0;show()};show=function(){lock=false;let q=extra[qi];$('quizbox').innerHTML='<div class="meta"><span>Вопрос '+(qi+1)+' / '+extra.length+'</span><span>Верно: '+score+'</span></div><div class="progress"><i style="width:'+(qi*100/extra.length)+'%"></i></div><h2>'+q[0]+'</h2>'+q[1].map((x,n)=>'<button class="opt" data-n="'+n+'">'+x+'</button>').join('');document.querySelectorAll('.opt').forEach(x=>x.onclick=()=>ans(+x.dataset.n))};ans=function(n){if(lock)return;lock=true;let q=extra[qi],o=document.querySelectorAll('.opt');o[q[2]].classList.add('correct');if(n===q[2])score++;else o[n].classList.add('wrong');setTimeout(()=>{qi++;qi<extra.length?show():$('quizbox').innerHTML='<h2>Результат: '+score+' / '+extra.length+'</h2><p class="status">'+(score>=23?'Отлично — база уже уверенная.':'Вернитесь к карточкам: тест можно пройти ещё раз.')+'</p><button onclick="start()">Ещё раз</button>'},650)};
+  const baseDraw=draw,baseFlip=f,baseGo=go;
+  let intro=true;
+  function startDeck(){intro=false;i=0;side=0;draw()}
+  draw=function(){
+    if(!intro){
+      $('known').hidden=false;$('shuffle').hidden=false;
+      return baseDraw();
+    }
+    $('tag').textContent='Вступление · Перед началом';
+    $('num').textContent='0 / '+C.length;
+    $('bar').style.width='0%';
+    $('card').className='card intro-card';
+    $('card').innerHTML='<img src="assets/hero/ai-without-magic.webp" alt="Человек за ноутбуком: изображения, карта, документ и аудио проходят через модель и превращаются в понятный результат"><div class="intro-copy"><div><h2>ИИ без магии</h2><p>Короткий курс о том, как ИИ работает и как пользоваться им с пользой.</p></div><span class="intro-start">Начать →</span></div>';
+    $('flip').textContent='Начать';$('prev').textContent='Начать';$('next').textContent='Начать';
+    $('known').hidden=true;$('shuffle').hidden=true;
+  };
+  f=function(){intro?startDeck():baseFlip()};
+  go=function(n){intro?startDeck():baseGo(n)};
+  $('card').onclick=f;$('flip').onclick=f;$('prev').onclick=()=>go(-1);$('next').onclick=()=>go(1);
   draw();
 });
